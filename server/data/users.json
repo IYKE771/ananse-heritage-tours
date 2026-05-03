@@ -1,0 +1,29 @@
+[
+  {
+    "id": "1775230279291",
+    "name": "Isaac Kojo Donkoh",
+    "email": "donkohmorrise@gmail.com",
+    "phone": "+233557482133",
+    "password": "$2a$10$mCn4jnr4u9tHRTXiL896Qeinjgmb0aAOHTbkvRoXhcCTJ7RoGjTRG",
+    "createdAt": "2026-04-03T15:31:19.291Z",
+    "role": "client"
+  },
+  {
+    "id": "1775230559098",
+    "name": "Sakyi",
+    "email": "donkohisaackojo@gmail.com",
+    "phone": "+233504041962",
+    "password": "$2a$10$30zTzo/YF/1M0tQC1oP1DOf.SZBNi4Krf9txQyjwF4thyKElrm16i",
+    "createdAt": "2026-04-03T15:35:59.098Z",
+    "role": "client"
+  },
+  {
+    "id": "1775236297296",
+    "name": "Morrise",
+    "email": "donkohisaacsakyi@gmail.com",
+    "phone": "0245675423",
+    "password": "$2a$10$S9dsniiHgYsC.8O5Jq7GUetw6zCpMGPKXcc2KUWaNXHzclZjPB2P.",
+    "createdAt": "2026-04-03T17:11:37.296Z",
+    "role": "client"
+  }
+]

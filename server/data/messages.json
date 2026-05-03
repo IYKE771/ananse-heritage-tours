@@ -1,0 +1,34 @@
+[
+  {
+    "id": "1775230401763",
+    "senderId": "1775230279291",
+    "receiverId": "admin",
+    "content": "Hello Boss",
+    "read": false,
+    "createdAt": "2026-04-03T15:33:21.763Z"
+  },
+  {
+    "id": "1775230577809",
+    "senderId": "1775230559098",
+    "receiverId": "admin",
+    "content": "Hello Boss. ",
+    "read": false,
+    "createdAt": "2026-04-03T15:36:17.809Z"
+  },
+  {
+    "id": "1775230638569",
+    "senderId": "1775230559098",
+    "receiverId": "admin",
+    "content": "Good afternoon",
+    "read": false,
+    "createdAt": "2026-04-03T15:37:18.570Z"
+  },
+  {
+    "id": "1775236406947",
+    "senderId": "1775236297296",
+    "receiverId": "admin",
+    "content": "Hello Boss",
+    "read": false,
+    "createdAt": "2026-04-03T17:13:26.947Z"
+  }
+]
