@@ -10,24 +10,31 @@ import { motion, AnimatePresence } from "motion/react";
 // ═══════════════════════════════════════════════════════════════════════════════
 export interface TourPackageData {
   name: string;
-  days: number;
-  basePriceAdult: number;   // Budget / per-person baseline
+  pricePerDayAdult: number;   // Per person per day — Budget baseline
   accommodationMultipliers: { budget: number; standard: number; comfort: number; luxury: number };
   highlights: string[];
   inclusions: string[];
   exclusions: string[];
   description: string;
+  // Group/institutional discount tiers
+  groupDiscounts: { minSize: number; discount: number; label: string }[];
 }
+
+// Standard group discount tiers (shared across most packages)
+const STD_GROUP_DISCOUNTS = [
+  { minSize: 10, discount: 0.10, label: "10–19 people: 10% off" },
+  { minSize: 20, discount: 0.18, label: "20–49 people: 18% off" },
+  { minSize: 50, discount: 0.25, label: "50+ people: 25% off" },
+];
 
 const TOUR_DATA: Record<string, TourPackageData> = {
   "Elmina and Cape Coast Castle Heritage Tour": {
     name: "Elmina and Cape Coast Castle Heritage Tour",
-    days: 3,
-    basePriceAdult: 320,
+    pricePerDayAdult: 107,
     accommodationMultipliers: { budget: 1, standard: 1.35, comfort: 1.7, luxury: 2.3 },
     highlights: ["Cape Coast Castle UNESCO World Heritage Site", "Elmina Castle, oldest European building in Africa", "Kakum National Park canopy walk", "Local fishing village visit", "Guided heritage storytelling tours"],
     inclusions: [
-      "2 nights accommodation",
+      "Nightly accommodation (per nights stayed)",
       "Daily breakfast and dinner",
       "Air-conditioned transport",
       "Expert local guide throughout",
@@ -42,16 +49,16 @@ const TOUR_DATA: Record<string, TourPackageData> = {
       "Tips for your guide and driver",
       "Souvenirs and personal shopping",
     ],
-    description: "This 3-day tour takes you through one of the most moving chapters in African history. You will walk the same corridors as those who passed through Cape Coast and Elmina Castles centuries ago, visit a local fishing village, and end with a breathtaking canopy walk high above the Kakum rainforest.",
+    description: "Walk the same corridors as those who passed through Cape Coast and Elmina Castles centuries ago, visit a local fishing village, and end with a breathtaking canopy walk high above the Kakum rainforest. Stay as many days as you wish — every day reveals something new.",
+    groupDiscounts: STD_GROUP_DISCOUNTS,
   },
   "Ashanti Kingdom Cultural Experience": {
     name: "Ashanti Kingdom Cultural Experience",
-    days: 5,
-    basePriceAdult: 580,
+    pricePerDayAdult: 116,
     accommodationMultipliers: { budget: 1, standard: 1.35, comfort: 1.75, luxury: 2.4 },
     highlights: ["Manhyia Palace Museum", "Kente weaving workshop in Bonwire", "Kejetia Market visit", "Traditional Ashanti village homestay", "Royal cultural evening with food and storytelling"],
     inclusions: [
-      "4 nights accommodation",
+      "Nightly accommodation (per nights stayed)",
       "Daily breakfast and dinner",
       "Air-conditioned transport",
       "Dedicated Ashanti cultural guide",
@@ -67,16 +74,16 @@ const TOUR_DATA: Record<string, TourPackageData> = {
       "Tips for your guide and driver",
       "Alcohol and personal purchases",
     ],
-    description: "Spend 5 days living and breathing the culture of the Ashanti Kingdom. You will visit the Manhyia Palace, sit with master Kente weavers in Bonwire, explore the incredible Kejetia Market, and share an evening of food and storytelling with a local Ashanti family. There is nothing quite like it in West Africa.",
+    description: "Live and breathe the culture of the Ashanti Kingdom at your own pace. Visit the Manhyia Palace, sit with master Kente weavers in Bonwire, explore the incredible Kejetia Market, and share an evening of food and storytelling with a local Ashanti family.",
+    groupDiscounts: STD_GROUP_DISCOUNTS,
   },
   "Volta Region and Wli Waterfalls Adventure": {
     name: "Volta Region and Wli Waterfalls Adventure",
-    days: 4,
-    basePriceAdult: 450,
+    pricePerDayAdult: 113,
     accommodationMultipliers: { budget: 1, standard: 1.3, comfort: 1.65, luxury: 2.2 },
     highlights: ["Wli Waterfalls, the tallest in West Africa", "Tafi Atome Monkey Sanctuary", "Akosombo Dam", "Lake Volta boat cruise", "Ho City cultural walk"],
     inclusions: [
-      "3 nights accommodation",
+      "Nightly accommodation (per nights stayed)",
       "Daily breakfast and dinner",
       "Air-conditioned transport",
       "Professional trekking guide",
@@ -91,16 +98,16 @@ const TOUR_DATA: Record<string, TourPackageData> = {
       "Tips for your guide and driver",
       "Optional canoe hire at the falls",
     ],
-    description: "This 4-day adventure heads into Ghana's eastern highlands where you will trek to the thundering Wli Waterfalls, meet wild Colobus monkeys at the Tafi Atome Sanctuary, and glide across the vast Lake Volta by boat. It is a perfect mix of nature, wildlife and culture.",
+    description: "Head into Ghana's eastern highlands to trek to the thundering Wli Waterfalls, meet wild Colobus monkeys at the Tafi Atome Sanctuary, and glide across the vast Lake Volta by boat. A perfect mix of nature, wildlife and culture — stay as long as you like.",
+    groupDiscounts: STD_GROUP_DISCOUNTS,
   },
   "Kakum National Park Canopy Walk": {
     name: "Kakum National Park Canopy Walk",
-    days: 2,
-    basePriceAdult: 210,
+    pricePerDayAdult: 105,
     accommodationMultipliers: { budget: 1, standard: 1.3, comfort: 1.6, luxury: 2.1 },
     highlights: ["Seven rope bridges 30 metres above the forest floor", "Guided rainforest birding walk", "Cape Coast town tour", "Night forest sounds experience"],
     inclusions: [
-      "1 night accommodation",
+      "Nightly accommodation (per nights stayed)",
       "Breakfast and dinner",
       "Air-conditioned transport",
       "Certified park ranger guide",
@@ -114,16 +121,16 @@ const TOUR_DATA: Record<string, TourPackageData> = {
       "Tips for your guide and driver",
       "Optional butterfly sanctuary visit (around $5)",
     ],
-    description: "Walk across seven swaying rope bridges 30 metres above the floor of one of Africa's last great tropical rainforests. This 2-day trip is perfect if you want a short but truly memorable experience in nature, with birdwatching, a night forest walk, and a visit to Cape Coast town included.",
+    description: "Walk across seven swaying rope bridges 30 metres above one of Africa's last great tropical rainforests. Perfect as a short getaway or a longer nature immersion — birdwatching, night forest walks, and Cape Coast town are all included each day.",
+    groupDiscounts: STD_GROUP_DISCOUNTS,
   },
   "Accra City and Arts Exploration": {
     name: "Accra City and Arts Exploration",
-    days: 3,
-    basePriceAdult: 290,
+    pricePerDayAdult: 97,
     accommodationMultipliers: { budget: 1, standard: 1.4, comfort: 1.8, luxury: 2.5 },
     highlights: ["National Museum of Ghana", "Makola Market", "Jamestown Lighthouse and fishing harbour", "Artists Alliance Gallery", "Labadi Beach at sunset"],
     inclusions: [
-      "2 nights accommodation",
+      "Nightly accommodation (per nights stayed)",
       "Daily breakfast",
       "Private air-conditioned transport",
       "Expert Accra city guide",
@@ -137,21 +144,21 @@ const TOUR_DATA: Record<string, TourPackageData> = {
       "Tips for your guide and driver",
       "Shopping and personal purchases",
     ],
-    description: "Three days in Accra will show you the city as locals know it. You will browse the National Museum, lose yourself in the colour of Makola Market, discover contemporary Ghanaian art at the Artists Alliance Gallery, and watch the sun go down over Labadi Beach. It is a relaxed but genuinely eye-opening experience.",
+    description: "Discover Accra as locals know it. Browse the National Museum, lose yourself in the colour of Makola Market, discover contemporary Ghanaian art at the Artists Alliance Gallery, and watch the sun go down over Labadi Beach. A relaxed but genuinely eye-opening city experience.",
+    groupDiscounts: STD_GROUP_DISCOUNTS,
   },
   "Mole National Park Safari": {
     name: "Mole National Park Safari",
-    days: 5,
-    basePriceAdult: 720,
+    pricePerDayAdult: 144,
     accommodationMultipliers: { budget: 1, standard: 1.35, comfort: 1.8, luxury: 2.6 },
     highlights: ["Elephant walking safari at dawn", "Warthogs, baboons and antelope on the plains", "Larabanga Mosque, oldest mosque in Ghana", "Mole Motel poolside elephant sightings", "Night game drive"],
     inclusions: [
-      "4 nights accommodation including Mole Motel",
+      "Nightly accommodation including Mole Motel",
       "Daily breakfast and dinner",
       "Return transport from Accra to Mole",
       "Certified wildlife guide",
-      "Two morning walking safaris",
-      "One night game drive",
+      "Morning walking safaris",
+      "Night game drive",
       "All park entrance and conservation fees",
       "Bottled water throughout the trip",
     ],
@@ -163,16 +170,16 @@ const TOUR_DATA: Record<string, TourPackageData> = {
       "Optional binocular hire",
       "Alcoholic drinks",
     ],
-    description: "Mole is Ghana's greatest wildlife destination and this 5-day safari gives you the full experience. You will walk with elephants at sunrise, watch warthogs and baboons roam the plains, explore the ancient Larabanga Mosque, and enjoy a night game drive under the northern sky. It is the kind of trip you will talk about for years.",
+    description: "Mole is Ghana's greatest wildlife destination. Walk with elephants at sunrise, watch warthogs and baboons roam the plains, explore the ancient Larabanga Mosque, and enjoy a night game drive under the northern sky. Spend as many days as you wish — wildlife sightings only get better.",
+    groupDiscounts: STD_GROUP_DISCOUNTS,
   },
   "Kumasi Market and Kente Weaving Tour": {
     name: "Kumasi Market and Kente Weaving Tour",
-    days: 3,
-    basePriceAdult: 340,
+    pricePerDayAdult: 113,
     accommodationMultipliers: { budget: 1, standard: 1.35, comfort: 1.7, luxury: 2.3 },
     highlights: ["Kejetia Market, largest open-air market in West Africa", "Bonwire Kente weaving village", "Kumasi Cultural Centre", "Okomfo Anokye Sword site", "Local fabric and craft shopping"],
     inclusions: [
-      "2 nights accommodation",
+      "Nightly accommodation (per nights stayed)",
       "Daily breakfast and dinner",
       "Air-conditioned transport",
       "Certified Ashanti cultural guide",
@@ -187,12 +194,12 @@ const TOUR_DATA: Record<string, TourPackageData> = {
       "Tips for your guide and driver",
       "Kente fabric and personal purchases",
     ],
-    description: "Three days in and around Kumasi will give you a real feel for Ashanti life. You will explore the jaw-dropping Kejetia Market, watch master weavers at work in the royal Kente village of Bonwire, and visit the Kumasi Cultural Centre. It is a colourful, energetic trip that stays with you long after you leave.",
+    description: "Experience Kumasi's vibrant Ashanti life — explore the jaw-dropping Kejetia Market, watch master weavers at work in the royal Kente village of Bonwire, and visit the Kumasi Cultural Centre. A colourful, energetic trip — choose your own pace and duration.",
+    groupDiscounts: STD_GROUP_DISCOUNTS,
   },
   "Custom / Private Tour Package": {
     name: "Custom / Private Tour Package",
-    days: 0,
-    basePriceAdult: 0,
+    pricePerDayAdult: 0,
     accommodationMultipliers: { budget: 1, standard: 1, comfort: 1, luxury: 1 },
     highlights: ["Fully personalised itinerary built around you", "Any combination of destinations across Ghana", "Private guide and vehicle throughout", "Flexible dates and duration", "Special occasions and group trips welcome"],
     inclusions: [
@@ -208,25 +215,38 @@ const TOUR_DATA: Record<string, TourPackageData> = {
       "Personal travel insurance",
       "Anything not listed in your personalised quote",
     ],
-    description: "If none of our set packages quite fit what you have in mind, we will build one from scratch just for you. Tell us where you want to go, how long you have, and what kind of experience you are looking for, and we will take care of everything. Send us a request and we will come back to you with a personalised quote within 24 hours.",
+    description: "If none of our set packages quite fit what you have in mind, we will build one from scratch just for you. Tell us where you want to go, how long you have, and what kind of experience you are looking for, and we will take care of everything.",
+    groupDiscounts: STD_GROUP_DISCOUNTS,
   },
 };
 
 const CHILD_DISCOUNT = 0.60; // children 5–12 pay 60% of adult price
 
+function getGroupDiscount(pkg: TourPackageData, groupSize: number): number {
+  if (!pkg.groupDiscounts || groupSize < 10) return 0;
+  const tier = [...pkg.groupDiscounts].reverse().find(t => groupSize >= t.minSize);
+  return tier ? tier.discount : 0;
+}
+
 function calculatePrice(
   pkg: TourPackageData,
   accommodation: string,
   adults: number,
-  children: number
-): { adultUnit: number; childUnit: number; adultTotal: number; childTotal: number; grandTotal: number } | null {
-  if (!pkg || pkg.basePriceAdult === 0) return null;
+  children: number,
+  days: number,
+  bookingType: "individual" | "group",
+  groupSize: number,
+): { adultUnitPerDay: number; childUnitPerDay: number; adultTotal: number; childTotal: number; grandTotal: number; groupDiscount: number; days: number } | null {
+  if (!pkg || pkg.pricePerDayAdult === 0 || days < 1) return null;
   const mult = pkg.accommodationMultipliers[accommodation as keyof typeof pkg.accommodationMultipliers] ?? 1;
-  const adultUnit = Math.round(pkg.basePriceAdult * mult);
-  const childUnit = Math.round(adultUnit * CHILD_DISCOUNT);
-  const adultTotal = adultUnit * adults;
-  const childTotal = childUnit * children;
-  return { adultUnit, childUnit, adultTotal, childTotal, grandTotal: adultTotal + childTotal };
+  const adultUnitPerDay = Math.round(pkg.pricePerDayAdult * mult);
+  const childUnitPerDay = Math.round(adultUnitPerDay * CHILD_DISCOUNT);
+  const effectiveSize = bookingType === "group" ? groupSize : adults + children;
+  const groupDiscount = bookingType === "group" ? getGroupDiscount(pkg, effectiveSize) : 0;
+  const discountMult = 1 - groupDiscount;
+  const adultTotal = Math.round(adultUnitPerDay * adults * days * discountMult);
+  const childTotal = Math.round(childUnitPerDay * children * days * discountMult);
+  return { adultUnitPerDay, childUnitPerDay, adultTotal, childTotal, grandTotal: adultTotal + childTotal, groupDiscount, days };
 }
 
 //
@@ -260,8 +280,11 @@ export function Contact() {
   // ── Booking form ─────────────────────────────────────────────────────────
   const [bookingData, setBookingData] = useState({
     fullName: "", email: "", phone: "", nationality: "",
-    tourPackage: "", travelDate: "", returnDate: "",
+    tourPackage: "", travelDate: "",
     adults: "1", children: "0", accommodation: "standard",
+    numberOfDays: "1",
+    bookingType: "individual" as "individual" | "group",
+    groupName: "", groupType: "", groupSize: "",
     specialRequests: "", howHeard: "",
   });
   const [bookingStatus, setBookingStatus] = useState<"idle" | "sending" | "success" | "error">("idle");
@@ -271,12 +294,17 @@ export function Contact() {
 
   // Derived: current package data based on selection
   const selectedPkg = TOUR_DATA[bookingData.tourPackage] ?? null;
+  const numDays = parseInt(bookingData.numberOfDays) || 1;
+  const groupSize = parseInt(bookingData.groupSize) || (parseInt(bookingData.adults) + parseInt(bookingData.children));
   const priceBreakdown = selectedPkg
     ? calculatePrice(
         selectedPkg,
         bookingData.accommodation,
         parseInt(bookingData.adults) || 1,
-        parseInt(bookingData.children) || 0
+        parseInt(bookingData.children) || 0,
+        numDays,
+        bookingData.bookingType,
+        groupSize,
       )
     : null;
 
@@ -347,23 +375,33 @@ export function Contact() {
             `Email         : ${bookingData.email}\n` +
             `Phone         : ${bookingData.phone}\n` +
             `Nationality   : ${bookingData.nationality || "N/A"}\n\n` +
-            `TOUR DETAILS\n` +
+            `BOOKING TYPE  : ${bookingData.bookingType === "group" ? "Group / Institutional" : "Individual"}\n` +
+            (bookingData.bookingType === "group"
+              ? `Group Name    : ${bookingData.groupName || "N/A"}\n` +
+                `Group Type    : ${bookingData.groupType || "N/A"}\n` +
+                `Group Size    : ${bookingData.groupSize || "N/A"}\n`
+              : "") +
+            `\nTOUR DETAILS\n` +
             `─────────────────────────────────────\n` +
             `Package       : ${bookingData.tourPackage}\n` +
-            `Duration      : ${selectedPkg ? selectedPkg.days + " days" : "N/A"}\n` +
+            `Number of Days: ${bookingData.numberOfDays}\n` +
             `Travel Date   : ${bookingData.travelDate}\n` +
-            `Return Date   : ${bookingData.returnDate || "N/A"}\n` +
             `Adults        : ${bookingData.adults}\n` +
             `Children      : ${bookingData.children}\n` +
             `Accommodation : ${bookingData.accommodation}\n\n` +
             `PRICE ESTIMATE\n` +
             `─────────────────────────────────────\n` +
             (priceBreakdown
-              ? `Adult (×${bookingData.adults}) : $${priceBreakdown.adultUnit}/pp = $${priceBreakdown.adultTotal}\n` +
+              ? `Rate          : $${priceBreakdown.adultUnitPerDay}/adult/day\n` +
+                `Duration      : ${priceBreakdown.days} day(s)\n` +
+                `Adult (×${bookingData.adults}) : $${priceBreakdown.adultTotal.toLocaleString()}\n` +
                 (parseInt(bookingData.children) > 0
-                  ? `Children (×${bookingData.children}) : $${priceBreakdown.childUnit}/pp = $${priceBreakdown.childTotal}\n`
+                  ? `Children (×${bookingData.children}) : $${priceBreakdown.childTotal.toLocaleString()}\n`
                   : "") +
-                `GRAND TOTAL   : $${priceBreakdown.grandTotal} USD (estimate)\n`
+                (priceBreakdown.groupDiscount > 0
+                  ? `Group Discount: ${Math.round(priceBreakdown.groupDiscount * 100)}% applied\n`
+                  : "") +
+                `GRAND TOTAL   : $${priceBreakdown.grandTotal.toLocaleString()} USD (estimate)\n`
               : `Custom package — pricing to be confirmed\n`) +
             `\nADDITIONAL INFO\n` +
             `─────────────────────────────────────\n` +
@@ -376,8 +414,10 @@ export function Contact() {
         setBookingStatus("success");
         setBookingData({
           fullName: "", email: "", phone: "", nationality: "", tourPackage: "",
-          travelDate: "", returnDate: "", adults: "1", children: "0",
-          accommodation: "standard", specialRequests: "", howHeard: "",
+          travelDate: "", adults: "1", children: "0",
+          accommodation: "standard", numberOfDays: "1",
+          bookingType: "individual", groupName: "", groupType: "", groupSize: "",
+          specialRequests: "", howHeard: "",
         });
         setTimeout(() => setBookingStatus("idle"), 7000);
       } else {
@@ -628,6 +668,73 @@ export function Contact() {
                       </div>
                     </div>
 
+                    {/* Booking Type Toggle */}
+                    <div className="bg-blue-50 rounded-2xl p-5 border border-blue-200">
+                      <h3 className="font-bold text-blue-800 text-lg flex items-center gap-2 mb-4">
+                        <Users className="h-5 w-5" /> Booking Type
+                      </h3>
+                      <div className="flex gap-3">
+                        {(["individual", "group"] as const).map((type) => (
+                          <button
+                            key={type}
+                            type="button"
+                            onClick={() => setBookingData({ ...bookingData, bookingType: type })}
+                            className={`flex-1 py-3 px-4 rounded-xl font-bold text-base transition-all duration-300 border-2 ${
+                              bookingData.bookingType === type
+                                ? "bg-gradient-to-r from-blue-500 to-indigo-600 text-white border-blue-500 shadow-lg scale-105"
+                                : "bg-white text-blue-700 border-blue-200 hover:border-blue-400"
+                            }`}
+                          >
+                            {type === "individual" ? "👤 Individual" : "🏢 Group / Institution"}
+                          </button>
+                        ))}
+                      </div>
+
+                      {/* Group details box */}
+                      {bookingData.bookingType === "group" && (
+                        <motion.div
+                          initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }}
+                          transition={{ duration: 0.3 }}
+                          className="mt-4 space-y-3 overflow-hidden"
+                        >
+                          <div className="bg-indigo-50 border border-indigo-200 rounded-xl p-4 text-sm text-indigo-800">
+                            <strong>Group discounts apply automatically:</strong> 10–19 people (10% off) · 20–49 people (18% off) · 50+ people (25% off)
+                          </div>
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div>
+                              <label className={labelClass}>Organisation / Group Name *</label>
+                              <input type="text" name="groupName" value={bookingData.groupName}
+                                onChange={handleBookingChange}
+                                placeholder="e.g. University of Ghana, Heritage Society"
+                                className={inputClass} />
+                            </div>
+                            <div>
+                              <label className={labelClass}>Group Type *</label>
+                              <select name="groupType" value={bookingData.groupType}
+                                onChange={handleBookingChange} className={inputClass}>
+                                <option value="">Select group type</option>
+                                <option value="Educational Institution">Educational Institution</option>
+                                <option value="Corporate / Company">Corporate / Company</option>
+                                <option value="NGO / Non-Profit">NGO / Non-Profit</option>
+                                <option value="Religious / Faith Group">Religious / Faith Group</option>
+                                <option value="Sports / Recreation Club">Sports / Recreation Club</option>
+                                <option value="Family Group">Family Group</option>
+                                <option value="Tour Operator / Agency">Tour Operator / Agency</option>
+                                <option value="Other">Other</option>
+                              </select>
+                            </div>
+                          </div>
+                          <div>
+                            <label className={labelClass}>Total Group Size *</label>
+                            <input type="number" name="groupSize" value={bookingData.groupSize}
+                              onChange={handleBookingChange}
+                              min="2" max="500" placeholder="Total number of people in group"
+                              className={inputClass} />
+                          </div>
+                        </motion.div>
+                      )}
+                    </div>
+
                     {/* Tour details */}
                     <div className="bg-green-50 rounded-2xl p-5 space-y-4 border border-green-200">
                       <h3 className="font-bold text-green-800 text-lg flex items-center gap-2">
@@ -641,17 +748,39 @@ export function Contact() {
                           {TOUR_PACKAGES.map((pkg) => <option key={pkg} value={pkg}>{pkg}</option>)}
                         </select>
                       </div>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div>
-                          <label className={labelClass}>Travel Date *</label>
-                          <input type="date" name="travelDate" value={bookingData.travelDate} onChange={handleBookingChange}
-                            required min={new Date().toISOString().split("T")[0]} className={inputClass} />
+
+                      {/* Number of Days — client-controlled */}
+                      <div>
+                        <label className={labelClass}>
+                          Number of Days *
+                          {selectedPkg && selectedPkg.pricePerDayAdult > 0 && (
+                            <span className="ml-2 text-green-600 font-normal text-sm">
+                              (${Math.round(selectedPkg.pricePerDayAdult * (selectedPkg.accommodationMultipliers[bookingData.accommodation as keyof typeof selectedPkg.accommodationMultipliers] ?? 1))}/person/day)
+                            </span>
+                          )}
+                        </label>
+                        <div className="flex items-center gap-3">
+                          <button type="button"
+                            onClick={() => setBookingData(prev => ({ ...prev, numberOfDays: String(Math.max(1, parseInt(prev.numberOfDays || "1") - 1)) }))}
+                            className="w-12 h-12 rounded-xl bg-green-200 hover:bg-green-300 text-green-800 font-bold text-2xl flex items-center justify-center transition-colors flex-shrink-0">
+                            −
+                          </button>
+                          <input type="number" name="numberOfDays" value={bookingData.numberOfDays}
+                            onChange={handleBookingChange}
+                            required min="1" max="60"
+                            className={`${inputClass} text-center text-xl font-bold`} />
+                          <button type="button"
+                            onClick={() => setBookingData(prev => ({ ...prev, numberOfDays: String(Math.min(60, parseInt(prev.numberOfDays || "1") + 1)) }))}
+                            className="w-12 h-12 rounded-xl bg-green-200 hover:bg-green-300 text-green-800 font-bold text-2xl flex items-center justify-center transition-colors flex-shrink-0">
+                            +
+                          </button>
                         </div>
-                        <div>
-                          <label className={labelClass}>Return Date</label>
-                          <input type="date" name="returnDate" value={bookingData.returnDate} onChange={handleBookingChange}
-                            min={bookingData.travelDate || new Date().toISOString().split("T")[0]} className={inputClass} />
-                        </div>
+                      </div>
+
+                      <div>
+                        <label className={labelClass}>Travel Start Date *</label>
+                        <input type="date" name="travelDate" value={bookingData.travelDate} onChange={handleBookingChange}
+                          required min={new Date().toISOString().split("T")[0]} className={inputClass} />
                       </div>
                       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                         <div>
@@ -660,7 +789,7 @@ export function Contact() {
                             required min="1" max="50" className={inputClass} />
                         </div>
                         <div>
-                          <label className={labelClass}>Children</label>
+                          <label className={labelClass}>Children (5–12)</label>
                           <input type="number" name="children" value={bookingData.children} onChange={handleBookingChange}
                             min="0" max="50" className={inputClass} />
                         </div>
