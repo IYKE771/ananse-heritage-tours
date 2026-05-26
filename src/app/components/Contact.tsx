@@ -987,7 +987,7 @@ export function Contact() {
                       <AlertCircle className="h-8 w-8 text-red-500 mr-4 flex-shrink-0" />
                       <div>
                         <p className="font-bold text-red-800 text-xl">Something went wrong</p>
-                        <p className="text-red-600">Please try again or email us at iykemorrise@gmail.com</p>
+                        <p className="text-red-600">Please try again or email us at ananseheritagetours@gmail.com</p>
                       </div>
                     </motion.div>
                   )}
