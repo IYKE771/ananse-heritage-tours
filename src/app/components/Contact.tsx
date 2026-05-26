@@ -257,7 +257,7 @@ function calculatePrice(
 //  4. Check your Gmail inbox — Web3Forms will email you an Access Key
 //  5. Copy that key and paste it below, replacing YOUR_ACCESS_KEY_HERE
 // ═══════════════════════════════════════════════════════════════════════════════
-const WEB3FORMS_KEY = "06fe3f11-7599-450a-a618-29e949e48451";
+const WEB3FORMS_KEY = "cb98b90b-9ac2-46d0-a5b0-cde2f36cfe27";
 
 const TOUR_PACKAGES = [
   "Elmina and Cape Coast Castle Heritage Tour",
