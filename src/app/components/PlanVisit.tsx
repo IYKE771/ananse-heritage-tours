@@ -3,13 +3,7 @@ import { motion } from "motion/react";
 import { Link } from "react-router-dom";
 
 export function PlanVisit() {
-  const ticketPrices = [
-    { type: "Standard Tour", price: "GH₵ 500", description: "Per person - Half Day" },
-    { type: "Premium Tour", price: "GH₵ 900", description: "Per person - Full Day" },
-    { type: "Group Package", price: "GH₵ 3,500", description: "Up to 8 people" },
-    { type: "Custom Tour", price: "Contact Us", description: "Tailored to your needs" },
-  ];
-
+  
   const amenities = [
     { icon: Car, title: "Transportation", description: "Comfortable air-conditioned vehicles" },
     { icon: Utensils, title: "Meals Included", description: "Traditional Ghanaian cuisine" },
@@ -222,73 +216,6 @@ export function PlanVisit() {
               </motion.div>
             </motion.div>
           </div>
-
-          {/* Ticket Prices */}
-          <motion.div 
-            className="mt-28"
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 1.2, ease: "easeOut" }}
-          >
-            <div className="text-center mb-16">
-              <h2 className="text-6xl md:text-7xl mb-6 font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-green-400">
-                Tour Pricing
-              </h2>
-              <div className="w-32 h-1 bg-gradient-to-r from-yellow-500 to-green-500 mx-auto mb-8"></div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-              {ticketPrices.map((ticket, index) => (
-                <motion.div 
-                  key={ticket.type}
-                  className="bg-gradient-to-br from-yellow-500/10 to-green-500/10 border-2 border-yellow-500/30 rounded-3xl p-8 hover:border-yellow-500 hover:shadow-2xl hover:shadow-yellow-500/20 transition-all duration-700 group"
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 1, delay: index * 0.15, ease: "easeOut" }}
-                  whileHover={{ y: -15 }}
-                >
-                  <h3 className="text-2xl mb-6 font-bold text-yellow-400 group-hover:text-yellow-300 transition-colors">{ticket.type}</h3>
-                  <div className="text-5xl text-white mb-4 font-bold">{ticket.price}</div>
-                  <p className="text-gray-400 text-lg">{ticket.description}</p>
-                </motion.div>
-              ))}
-            </div>
-
-            <motion.div 
-              className="mt-12 p-10 bg-gradient-to-br from-yellow-500/10 to-green-500/10 border border-yellow-500/30 rounded-3xl shadow-2xl"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 1, delay: 0.6 }}
-            >
-              <h3 className="font-bold text-yellow-400 mb-6 text-3xl">Special Offers & Discounts</h3>
-              <ul className="text-gray-300 space-y-4 text-lg">
-                {[
-                  "Students with valid ID: 15% discount",
-                  "Groups of 10 or more: 25% discount",
-                  "Multiple-day packages: Up to 30% off",
-                  "Senior citizens (60+): 20% discount",
-                  "Children under 12: 50% off",
-                  "Educational institutions: Custom rates available"
-                ].map((offer, index) => (
-                  <motion.li 
-                    key={offer}
-                    className="flex items-center group"
-                    initial={{ opacity: 0, x: -20 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.8, delay: 0.7 + index * 0.08 }}
-                    whileHover={{ x: 8 }}
-                  >
-                    <span className="w-3 h-3 bg-yellow-400 rounded-full mr-4 group-hover:scale-150 transition-transform duration-300"></span>
-                    {offer}
-                  </motion.li>
-                ))}
-              </ul>
-            </motion.div>
-          </motion.div>
 
           {/* Best Time to Visit */}
           <motion.div 
