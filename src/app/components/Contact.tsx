@@ -1,10 +1,234 @@
 import { useState } from "react";
-import { Mail, Phone, MapPin, Clock, Send, CheckCircle, Calendar, Users, Globe, Star, ChevronRight, AlertCircle, Loader } from "lucide-react";
+import { Mail, Phone, MapPin, Clock, Send, CheckCircle, Calendar, Users, Globe, Star, ChevronRight, AlertCircle, Loader, Check, X, Tag, Info } from "lucide-react";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
-import { motion } from "motion/react";
+import { motion, AnimatePresence } from "motion/react";
 
 // ═══════════════════════════════════════════════════════════════════════════════
-//  WEB3FORMS SETUP — only ONE key needed, totally free, unlimited emails
+//  TOUR PACKAGE DATA — pricing, duration, inclusions, exclusions
+//  Prices in USD per person (adult). Children 5–12 pay 60% of adult price.
+//  Children under 5 are free. Accommodation multipliers applied on top.
+// ═══════════════════════════════════════════════════════════════════════════════
+export interface TourPackageData {
+  name: string;
+  days: number;
+  basePriceAdult: number;   // Budget / per-person baseline
+  accommodationMultipliers: { budget: number; standard: number; comfort: number; luxury: number };
+  highlights: string[];
+  inclusions: string[];
+  exclusions: string[];
+  description: string;
+}
+
+const TOUR_DATA: Record<string, TourPackageData> = {
+  "Elmina and Cape Coast Castle Heritage Tour": {
+    name: "Elmina and Cape Coast Castle Heritage Tour",
+    days: 3,
+    basePriceAdult: 320,
+    accommodationMultipliers: { budget: 1, standard: 1.35, comfort: 1.7, luxury: 2.3 },
+    highlights: ["Cape Coast Castle UNESCO World Heritage Site", "Elmina Castle, oldest European building in Africa", "Kakum National Park canopy walk", "Local fishing village visit", "Guided heritage storytelling tours"],
+    inclusions: [
+      "2 nights accommodation",
+      "Daily breakfast and dinner",
+      "Air-conditioned transport",
+      "Expert local guide throughout",
+      "All castle and park entrance fees",
+      "Canopy walk fees",
+      "Bottled water throughout the trip",
+    ],
+    exclusions: [
+      "International flights",
+      "Lunches (around $8 to $15 per day)",
+      "Personal travel insurance",
+      "Tips for your guide and driver",
+      "Souvenirs and personal shopping",
+    ],
+    description: "This 3-day tour takes you through one of the most moving chapters in African history. You will walk the same corridors as those who passed through Cape Coast and Elmina Castles centuries ago, visit a local fishing village, and end with a breathtaking canopy walk high above the Kakum rainforest.",
+  },
+  "Ashanti Kingdom Cultural Experience": {
+    name: "Ashanti Kingdom Cultural Experience",
+    days: 5,
+    basePriceAdult: 580,
+    accommodationMultipliers: { budget: 1, standard: 1.35, comfort: 1.75, luxury: 2.4 },
+    highlights: ["Manhyia Palace Museum", "Kente weaving workshop in Bonwire", "Kejetia Market visit", "Traditional Ashanti village homestay", "Royal cultural evening with food and storytelling"],
+    inclusions: [
+      "4 nights accommodation",
+      "Daily breakfast and dinner",
+      "Air-conditioned transport",
+      "Dedicated Ashanti cultural guide",
+      "Palace and museum entrance fees",
+      "Hands-on Kente weaving workshop",
+      "Traditional Ashanti feast evening",
+      "Bottled water throughout the trip",
+    ],
+    exclusions: [
+      "International flights",
+      "Lunches (around $8 to $15 per day)",
+      "Personal travel insurance",
+      "Tips for your guide and driver",
+      "Alcohol and personal purchases",
+    ],
+    description: "Spend 5 days living and breathing the culture of the Ashanti Kingdom. You will visit the Manhyia Palace, sit with master Kente weavers in Bonwire, explore the incredible Kejetia Market, and share an evening of food and storytelling with a local Ashanti family. There is nothing quite like it in West Africa.",
+  },
+  "Volta Region and Wli Waterfalls Adventure": {
+    name: "Volta Region and Wli Waterfalls Adventure",
+    days: 4,
+    basePriceAdult: 450,
+    accommodationMultipliers: { budget: 1, standard: 1.3, comfort: 1.65, luxury: 2.2 },
+    highlights: ["Wli Waterfalls, the tallest in West Africa", "Tafi Atome Monkey Sanctuary", "Akosombo Dam", "Lake Volta boat cruise", "Ho City cultural walk"],
+    inclusions: [
+      "3 nights accommodation",
+      "Daily breakfast and dinner",
+      "Air-conditioned transport",
+      "Professional trekking guide",
+      "All park and sanctuary entrance fees",
+      "Lake Volta boat cruise",
+      "Bottled water throughout the trip",
+    ],
+    exclusions: [
+      "International flights",
+      "Lunches (around $8 to $15 per day)",
+      "Personal travel insurance",
+      "Tips for your guide and driver",
+      "Optional canoe hire at the falls",
+    ],
+    description: "This 4-day adventure heads into Ghana's eastern highlands where you will trek to the thundering Wli Waterfalls, meet wild Colobus monkeys at the Tafi Atome Sanctuary, and glide across the vast Lake Volta by boat. It is a perfect mix of nature, wildlife and culture.",
+  },
+  "Kakum National Park Canopy Walk": {
+    name: "Kakum National Park Canopy Walk",
+    days: 2,
+    basePriceAdult: 210,
+    accommodationMultipliers: { budget: 1, standard: 1.3, comfort: 1.6, luxury: 2.1 },
+    highlights: ["Seven rope bridges 30 metres above the forest floor", "Guided rainforest birding walk", "Cape Coast town tour", "Night forest sounds experience"],
+    inclusions: [
+      "1 night accommodation",
+      "Breakfast and dinner",
+      "Air-conditioned transport",
+      "Certified park ranger guide",
+      "All park and canopy walk entrance fees",
+      "Bottled water throughout the trip",
+    ],
+    exclusions: [
+      "International flights",
+      "Lunches",
+      "Personal travel insurance",
+      "Tips for your guide and driver",
+      "Optional butterfly sanctuary visit (around $5)",
+    ],
+    description: "Walk across seven swaying rope bridges 30 metres above the floor of one of Africa's last great tropical rainforests. This 2-day trip is perfect if you want a short but truly memorable experience in nature, with birdwatching, a night forest walk, and a visit to Cape Coast town included.",
+  },
+  "Accra City and Arts Exploration": {
+    name: "Accra City and Arts Exploration",
+    days: 3,
+    basePriceAdult: 290,
+    accommodationMultipliers: { budget: 1, standard: 1.4, comfort: 1.8, luxury: 2.5 },
+    highlights: ["National Museum of Ghana", "Makola Market", "Jamestown Lighthouse and fishing harbour", "Artists Alliance Gallery", "Labadi Beach at sunset"],
+    inclusions: [
+      "2 nights accommodation",
+      "Daily breakfast",
+      "Private air-conditioned transport",
+      "Expert Accra city guide",
+      "Museum and gallery entrance fees",
+      "Bottled water throughout the trip",
+    ],
+    exclusions: [
+      "International flights",
+      "Lunches and dinners (around $10 to $20 per day)",
+      "Personal travel insurance",
+      "Tips for your guide and driver",
+      "Shopping and personal purchases",
+    ],
+    description: "Three days in Accra will show you the city as locals know it. You will browse the National Museum, lose yourself in the colour of Makola Market, discover contemporary Ghanaian art at the Artists Alliance Gallery, and watch the sun go down over Labadi Beach. It is a relaxed but genuinely eye-opening experience.",
+  },
+  "Mole National Park Safari": {
+    name: "Mole National Park Safari",
+    days: 5,
+    basePriceAdult: 720,
+    accommodationMultipliers: { budget: 1, standard: 1.35, comfort: 1.8, luxury: 2.6 },
+    highlights: ["Elephant walking safari at dawn", "Warthogs, baboons and antelope on the plains", "Larabanga Mosque, oldest mosque in Ghana", "Mole Motel poolside elephant sightings", "Night game drive"],
+    inclusions: [
+      "4 nights accommodation including Mole Motel",
+      "Daily breakfast and dinner",
+      "Return transport from Accra to Mole",
+      "Certified wildlife guide",
+      "Two morning walking safaris",
+      "One night game drive",
+      "All park entrance and conservation fees",
+      "Bottled water throughout the trip",
+    ],
+    exclusions: [
+      "International flights",
+      "Lunches (around $10 to $15 per day)",
+      "Personal travel insurance",
+      "Tips for your guide and driver",
+      "Optional binocular hire",
+      "Alcoholic drinks",
+    ],
+    description: "Mole is Ghana's greatest wildlife destination and this 5-day safari gives you the full experience. You will walk with elephants at sunrise, watch warthogs and baboons roam the plains, explore the ancient Larabanga Mosque, and enjoy a night game drive under the northern sky. It is the kind of trip you will talk about for years.",
+  },
+  "Kumasi Market and Kente Weaving Tour": {
+    name: "Kumasi Market and Kente Weaving Tour",
+    days: 3,
+    basePriceAdult: 340,
+    accommodationMultipliers: { budget: 1, standard: 1.35, comfort: 1.7, luxury: 2.3 },
+    highlights: ["Kejetia Market, largest open-air market in West Africa", "Bonwire Kente weaving village", "Kumasi Cultural Centre", "Okomfo Anokye Sword site", "Local fabric and craft shopping"],
+    inclusions: [
+      "2 nights accommodation",
+      "Daily breakfast and dinner",
+      "Air-conditioned transport",
+      "Certified Ashanti cultural guide",
+      "Kente village workshop and live demonstration",
+      "Cultural centre entrance fees",
+      "Bottled water throughout the trip",
+    ],
+    exclusions: [
+      "International flights",
+      "Lunches (around $8 to $12 per day)",
+      "Personal travel insurance",
+      "Tips for your guide and driver",
+      "Kente fabric and personal purchases",
+    ],
+    description: "Three days in and around Kumasi will give you a real feel for Ashanti life. You will explore the jaw-dropping Kejetia Market, watch master weavers at work in the royal Kente village of Bonwire, and visit the Kumasi Cultural Centre. It is a colourful, energetic trip that stays with you long after you leave.",
+  },
+  "Custom / Private Tour Package": {
+    name: "Custom / Private Tour Package",
+    days: 0,
+    basePriceAdult: 0,
+    accommodationMultipliers: { budget: 1, standard: 1, comfort: 1, luxury: 1 },
+    highlights: ["Fully personalised itinerary built around you", "Any combination of destinations across Ghana", "Private guide and vehicle throughout", "Flexible dates and duration", "Special occasions and group trips welcome"],
+    inclusions: [
+      "Everything planned around your preferences",
+      "Private licensed guide",
+      "Private air-conditioned vehicle",
+      "Accommodation of your choice",
+      "Meals as agreed in your quote",
+      "All entrance fees as per your itinerary",
+    ],
+    exclusions: [
+      "International flights",
+      "Personal travel insurance",
+      "Anything not listed in your personalised quote",
+    ],
+    description: "If none of our set packages quite fit what you have in mind, we will build one from scratch just for you. Tell us where you want to go, how long you have, and what kind of experience you are looking for, and we will take care of everything. Send us a request and we will come back to you with a personalised quote within 24 hours.",
+  },
+};
+
+const CHILD_DISCOUNT = 0.60; // children 5–12 pay 60% of adult price
+
+function calculatePrice(
+  pkg: TourPackageData,
+  accommodation: string,
+  adults: number,
+  children: number
+): { adultUnit: number; childUnit: number; adultTotal: number; childTotal: number; grandTotal: number } | null {
+  if (!pkg || pkg.basePriceAdult === 0) return null;
+  const mult = pkg.accommodationMultipliers[accommodation as keyof typeof pkg.accommodationMultipliers] ?? 1;
+  const adultUnit = Math.round(pkg.basePriceAdult * mult);
+  const childUnit = Math.round(adultUnit * CHILD_DISCOUNT);
+  const adultTotal = adultUnit * adults;
+  const childTotal = childUnit * children;
+  return { adultUnit, childUnit, adultTotal, childTotal, grandTotal: adultTotal + childTotal };
+}
+
 //
 //  HOW TO GET YOUR KEY (takes 2 minutes):
 //  1. Go to https://web3forms.com
@@ -43,6 +267,18 @@ export function Contact() {
   const [bookingStatus, setBookingStatus] = useState<"idle" | "sending" | "success" | "error">("idle");
 
   const [activeTab, setActiveTab] = useState<"contact" | "booking">("contact");
+  const [showPricingPanel, setShowPricingPanel] = useState(false);
+
+  // Derived: current package data based on selection
+  const selectedPkg = TOUR_DATA[bookingData.tourPackage] ?? null;
+  const priceBreakdown = selectedPkg
+    ? calculatePrice(
+        selectedPkg,
+        bookingData.accommodation,
+        parseInt(bookingData.adults) || 1,
+        parseInt(bookingData.children) || 0
+      )
+    : null;
 
   // ── Handlers ─────────────────────────────────────────────────────────────
   const handleContactChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) =>
@@ -114,12 +350,22 @@ export function Contact() {
             `TOUR DETAILS\n` +
             `─────────────────────────────────────\n` +
             `Package       : ${bookingData.tourPackage}\n` +
+            `Duration      : ${selectedPkg ? selectedPkg.days + " days" : "N/A"}\n` +
             `Travel Date   : ${bookingData.travelDate}\n` +
             `Return Date   : ${bookingData.returnDate || "N/A"}\n` +
             `Adults        : ${bookingData.adults}\n` +
             `Children      : ${bookingData.children}\n` +
             `Accommodation : ${bookingData.accommodation}\n\n` +
-            `ADDITIONAL INFO\n` +
+            `PRICE ESTIMATE\n` +
+            `─────────────────────────────────────\n` +
+            (priceBreakdown
+              ? `Adult (×${bookingData.adults}) : $${priceBreakdown.adultUnit}/pp = $${priceBreakdown.adultTotal}\n` +
+                (parseInt(bookingData.children) > 0
+                  ? `Children (×${bookingData.children}) : $${priceBreakdown.childUnit}/pp = $${priceBreakdown.childTotal}\n`
+                  : "") +
+                `GRAND TOTAL   : $${priceBreakdown.grandTotal} USD (estimate)\n`
+              : `Custom package — pricing to be confirmed\n`) +
+            `\nADDITIONAL INFO\n` +
             `─────────────────────────────────────\n` +
             `Special Requests : ${bookingData.specialRequests || "None"}\n` +
             `How They Heard   : ${bookingData.howHeard || "N/A"}\n`,
@@ -157,7 +403,7 @@ export function Contact() {
     {
       icon: Mail, title: "Email Us",
       details: [
-        { label: "donkohisaacsakye@gmail.com", href: "mailto:donkohisaacsakye@gmail.com" },
+        { label: "ananseheritagetours@gmail.com", href: "mailto:ananseheritagetours@gmail.com" },
       ],
       color: "from-amber-400 to-orange-500",
     },
@@ -430,6 +676,138 @@ export function Contact() {
                         </div>
                       </div>
                     </div>
+
+                    {/* ── LIVE PRICING & PACKAGE DETAILS PANEL ── */}
+                    <AnimatePresence>
+                      {selectedPkg && (
+                        <motion.div
+                          key={bookingData.tourPackage}
+                          initial={{ opacity: 0, y: -10, scale: 0.98 }}
+                          animate={{ opacity: 1, y: 0, scale: 1 }}
+                          exit={{ opacity: 0, y: -10, scale: 0.98 }}
+                          transition={{ duration: 0.4, ease: "easeOut" }}
+                          className="rounded-2xl overflow-hidden border-2 border-yellow-400 shadow-xl"
+                        >
+                          {/* Panel header */}
+                          <div className="bg-gradient-to-r from-amber-500 to-yellow-500 px-5 py-4 flex items-center justify-between">
+                            <div className="flex items-center gap-2 text-white font-bold text-lg">
+                              <Tag className="h-5 w-5" />
+                              Package Summary & Pricing
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => setShowPricingPanel(!showPricingPanel)}
+                              className="text-white/80 hover:text-white text-sm underline"
+                            >
+                              {showPricingPanel ? "Hide details" : "Show full details"}
+                            </button>
+                          </div>
+
+                          <div className="bg-white p-5 space-y-5">
+                            {/* Quick stats row */}
+                            <div className="flex flex-wrap gap-3">
+                              <span className="inline-flex items-center gap-1.5 bg-amber-100 text-amber-800 text-sm font-semibold px-3 py-1.5 rounded-full">
+                                <Calendar className="h-4 w-4" /> {selectedPkg.days > 0 ? `${selectedPkg.days} Days` : "Custom Duration"}
+                              </span>
+                              <span className="inline-flex items-center gap-1.5 bg-green-100 text-green-800 text-sm font-semibold px-3 py-1.5 rounded-full">
+                                <Star className="h-4 w-4" /> {bookingData.accommodation.charAt(0).toUpperCase() + bookingData.accommodation.slice(1)} Accommodation
+                              </span>
+                              {selectedPkg.days > 0 && (
+                                <span className="inline-flex items-center gap-1.5 bg-blue-100 text-blue-800 text-sm font-semibold px-3 py-1.5 rounded-full">
+                                  <Users className="h-4 w-4" /> {bookingData.adults} Adult{parseInt(bookingData.adults) !== 1 ? "s" : ""}{parseInt(bookingData.children) > 0 ? ` · ${bookingData.children} Child${parseInt(bookingData.children) !== 1 ? "ren" : ""}` : ""}
+                                </span>
+                              )}
+                            </div>
+
+                            {/* Description */}
+                            <p className="text-gray-600 text-sm leading-relaxed">{selectedPkg.description}</p>
+
+                            {/* Price breakdown */}
+                            {priceBreakdown ? (
+                              <div className="bg-gradient-to-br from-amber-50 to-yellow-50 border border-amber-200 rounded-xl p-4">
+                                <p className="text-xs font-bold text-amber-700 uppercase tracking-widest mb-3 flex items-center gap-1.5">
+                                  <Info className="h-3.5 w-3.5" /> Estimated Price Breakdown
+                                </p>
+                                <div className="space-y-2 text-sm">
+                                  <div className="flex justify-between items-center">
+                                    <span className="text-gray-600">Adults × {bookingData.adults} <span className="text-gray-400">(${priceBreakdown.adultUnit}/person)</span></span>
+                                    <span className="font-bold text-gray-900">${priceBreakdown.adultTotal.toLocaleString()}</span>
+                                  </div>
+                                  {parseInt(bookingData.children) > 0 && (
+                                    <div className="flex justify-between items-center">
+                                      <span className="text-gray-600">Children × {bookingData.children} <span className="text-gray-400">(${priceBreakdown.childUnit}/child · 40% off)</span></span>
+                                      <span className="font-bold text-gray-900">${priceBreakdown.childTotal.toLocaleString()}</span>
+                                    </div>
+                                  )}
+                                  <div className="border-t border-amber-300 pt-2 mt-2 flex justify-between items-center">
+                                    <span className="font-bold text-gray-900 text-base">Total Estimate</span>
+                                    <span className="text-2xl font-bold text-amber-600">${priceBreakdown.grandTotal.toLocaleString()} <span className="text-sm text-gray-500 font-normal">USD</span></span>
+                                  </div>
+                                </div>
+                                <p className="text-xs text-gray-400 mt-3 leading-snug">* Children aged 5–12 receive 40% discount. Under 5 are free. Prices are estimates — final confirmed pricing will be provided within 24 hours of booking request.</p>
+                              </div>
+                            ) : (
+                              <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 text-sm text-amber-800">
+                                <strong>Custom package:</strong> Pricing will be tailored to your specific itinerary. Submit your request and we'll send a personalised quote within 24 hours.
+                              </div>
+                            )}
+
+                            {/* Highlights */}
+                            <div>
+                              <p className="text-xs font-bold text-gray-700 uppercase tracking-widest mb-2">Tour Highlights</p>
+                              <ul className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
+                                {selectedPkg.highlights.map((h, i) => (
+                                  <li key={i} className="flex items-start gap-1.5 text-sm text-gray-700">
+                                    <Star className="h-3.5 w-3.5 text-yellow-500 mt-0.5 flex-shrink-0" />
+                                    {h}
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+
+                            {/* Inclusions / Exclusions expandable */}
+                            <AnimatePresence>
+                              {showPricingPanel && (
+                                <motion.div
+                                  initial={{ opacity: 0, height: 0 }}
+                                  animate={{ opacity: 1, height: "auto" }}
+                                  exit={{ opacity: 0, height: 0 }}
+                                  transition={{ duration: 0.3 }}
+                                  className="grid grid-cols-1 sm:grid-cols-2 gap-4 overflow-hidden"
+                                >
+                                  <div className="bg-green-50 border border-green-200 rounded-xl p-4">
+                                    <p className="text-xs font-bold text-green-800 uppercase tracking-widest mb-2 flex items-center gap-1.5">
+                                      <Check className="h-3.5 w-3.5" /> What's Included
+                                    </p>
+                                    <ul className="space-y-1.5">
+                                      {selectedPkg.inclusions.map((item, i) => (
+                                        <li key={i} className="flex items-start gap-2 text-sm text-green-900">
+                                          <Check className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
+                                          {item}
+                                        </li>
+                                      ))}
+                                    </ul>
+                                  </div>
+                                  <div className="bg-red-50 border border-red-200 rounded-xl p-4">
+                                    <p className="text-xs font-bold text-red-800 uppercase tracking-widest mb-2 flex items-center gap-1.5">
+                                      <X className="h-3.5 w-3.5" /> Not Included
+                                    </p>
+                                    <ul className="space-y-1.5">
+                                      {selectedPkg.exclusions.map((item, i) => (
+                                        <li key={i} className="flex items-start gap-2 text-sm text-red-900">
+                                          <X className="h-4 w-4 text-red-500 mt-0.5 flex-shrink-0" />
+                                          {item}
+                                        </li>
+                                      ))}
+                                    </ul>
+                                  </div>
+                                </motion.div>
+                              )}
+                            </AnimatePresence>
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
 
                     {/* Extra */}
                     <div className="space-y-4">
